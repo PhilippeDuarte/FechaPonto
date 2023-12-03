@@ -10,7 +10,7 @@ namespace FechaPonto.Servicos.Arquivos
 		private readonly Formatadores _utilitarios;
 		public LeitorDeArquivos()
 		{
-			_utilitarios= new Formatadores();
+			_utilitarios = new Formatadores();
 		}
 		private async Task<IEnumerable<PontoFuncionario>> RealizaLeitura(string caminhoDoArquivoASerLido)
 		{
@@ -23,7 +23,7 @@ namespace FechaPonto.Servicos.Arquivos
 			while (!sr.EndOfStream)
 			{
 				string? linha = await sr.ReadLineAsync();
-				if(linha is not null)
+				if (linha is not null)
 				{
 					string[] propriedades = linha.Split(';');
 					if (propriedades[0] != "Código")
@@ -42,23 +42,17 @@ namespace FechaPonto.Servicos.Arquivos
 			}
 			return listaPonto;
 		}
-		
+
 		public async Task<IEnumerable<PontoFuncionario>> ObterTodosOsPontosPorSetor(string caminho)
 		{
-			var files = Directory.EnumerateFiles(caminho, "*.csv");
-			
 			var bag = new ConcurrentBag<PontoFuncionario>();
-			var tasks = files.Select(async file =>
+
+			var response = await RealizaLeitura(caminho);
+			foreach (var item in response)
 			{
-				var response = await RealizaLeitura(file);
-				foreach(var item in response)
-				{
-					bag.Add(item);
-				}
-				
-			});
-			
-			await Task.WhenAll(tasks);
+				bag.Add(item);
+			}
+
 			return bag.ToList();
 		}
 

@@ -17,13 +17,23 @@
 			double totalAReceberDia = ObterHorasDia(horaInicial, horaFinal, almoco).TotalHours * valorHora;
 			return totalAReceberDia;
 		}
-		public TimeSpan ObterHorasExtraOuDebito(TimeSpan horaInicial, TimeSpan horaFinal, TimeSpan almoco)
+		public TimeSpan ObterHorasExtraOuDebito(TimeSpan horaInicial, TimeSpan horaFinal, TimeSpan almoco, DateTime data)
 		{
-			TimeSpan horasExtraOuDebito = ObterHorasDia(horaInicial, horaFinal, almoco).Add(new TimeSpan(-9,0,0));
-			return horasExtraOuDebito;
+
+			TimeSpan horasExtraOuDebito = new TimeSpan();
+
+			//Verifica se houve falta durante a semana e realiza o desconto
+			if (horaFinal == horaInicial && !ChecarDiaDaSemana(data))
+			{
+				return horasExtraOuDebito.Add(new TimeSpan(-9, 0, 0));
+			}
+			horasExtraOuDebito = ObterHorasDia(horaInicial, horaFinal, almoco);
+			
+			//Se o trabalho for feito no final de semana é considerado o dia todo como extra, do contrário subtrai as horas normais.
+			return ChecarDiaDaSemana(data) ? horasExtraOuDebito : horasExtraOuDebito.Add(new TimeSpan(-9, 0, 0));
 		}
 		public bool ChecarDiaDaSemana(DateTime data)
-		{
+		{			
 			if ((data.DayOfWeek == DayOfWeek.Sunday) || (data.DayOfWeek == DayOfWeek.Saturday))
 			{
 				return true;
@@ -35,5 +45,6 @@
 			TimeSpan somaHoras = horaFinal - horaInicial - almoco;
 			return somaHoras;
 		}
+		
 	}
 }
