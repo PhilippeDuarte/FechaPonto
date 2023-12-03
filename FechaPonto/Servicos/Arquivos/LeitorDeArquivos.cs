@@ -18,29 +18,36 @@ namespace FechaPonto.Servicos.Arquivos
 			{
 				return null;
 			}
-			List<PontoFuncionario> listaPonto = new List<PontoFuncionario>();
-			using StreamReader sr = new StreamReader(caminhoDoArquivoASerLido);
-			while (!sr.EndOfStream)
+			try
 			{
-				string? linha = await sr.ReadLineAsync();
-				if (linha is not null)
+				List<PontoFuncionario> listaPonto = new List<PontoFuncionario>();
+				using StreamReader sr = new StreamReader(caminhoDoArquivoASerLido);
+				while (!sr.EndOfStream)
 				{
-					string[] propriedades = linha.Split(';');
-					if (propriedades[0] != "Código")
+					string? linha = await sr.ReadLineAsync();
+					if (linha is not null)
 					{
-						PontoFuncionario funcionario = new PontoFuncionario();
-						funcionario.Id = int.Parse(propriedades[0]);
-						funcionario.Nome = propriedades[1];
-						funcionario.ValorHora = _utilitarios.FormataDinheiro(propriedades[2]);
-						funcionario.Data = Convert.ToDateTime(propriedades[3]);
-						funcionario.Entrada = Convert.ToDateTime(propriedades[4]).TimeOfDay;
-						funcionario.Saida = Convert.ToDateTime(propriedades[5]).TimeOfDay;
-						funcionario.Almoco = _utilitarios.FormataDiferenca(propriedades[6]);
-						listaPonto.Add(funcionario);
+						string[] propriedades = linha.Split(';');
+						if (propriedades[0] != "Código")
+						{
+							PontoFuncionario funcionario = new PontoFuncionario();
+							funcionario.Id = int.Parse(propriedades[0]);
+							funcionario.Nome = propriedades[1];
+							funcionario.ValorHora = await _utilitarios.FormataDinheiro(propriedades[2]);
+							funcionario.Data = Convert.ToDateTime(propriedades[3]);
+							funcionario.Entrada = Convert.ToDateTime(propriedades[4]).TimeOfDay;
+							funcionario.Saida = Convert.ToDateTime(propriedades[5]).TimeOfDay;
+							funcionario.Almoco = _utilitarios.FormataDiferencaAlmoco(propriedades[6]);
+							listaPonto.Add(funcionario);
+						}
 					}
 				}
+				return listaPonto;
 			}
-			return listaPonto;
+			catch (Exception ex)
+			{
+				throw new InvalidCastException("Conversão de valor inválido na lista: " + ex);
+			}
 		}
 
 		public async Task<IEnumerable<PontoFuncionario>> ObterTodosOsPontosPorSetor(string caminho)

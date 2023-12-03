@@ -2,15 +2,22 @@
 {
 	public class Formatadores
 	{
-		public double FormataDinheiro(string valor)
+		public async Task<double> FormataDinheiro(string valor)
 		{
 			string dinheiro = valor.Split()[1];
 			return Convert.ToDouble(dinheiro);
 		}
-		public TimeSpan FormataDiferenca(string valor)
+		public TimeSpan FormataDiferencaAlmoco(string valor)
 		{
-			string[] tempo = valor.Split('-');
-			return Convert.ToDateTime(tempo[1]).TimeOfDay - Convert.ToDateTime(tempo[0]).TimeOfDay;
+			try
+			{
+				string[] tempo = valor.Split('-');
+				return Convert.ToDateTime(tempo[1]).TimeOfDay - Convert.ToDateTime(tempo[0]).TimeOfDay;
+			}
+			catch (Exception ex)
+			{
+				throw new InvalidCastException("Conversão de valor inválido na lista: " + ex);
+			}
 		}
 		public double ObterTotalAReceberDia(TimeSpan horaInicial, TimeSpan horaFinal, TimeSpan almoco, double valorHora)
 		{

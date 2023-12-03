@@ -36,6 +36,10 @@ namespace FechaPonto.Controllers
 			List<PontoDepartamento> listaPontoDepartamento = new List<PontoDepartamento>();
 			 
 			var files = Directory.EnumerateFiles(caminho, "*.csv");
+			if (!files.Any())
+			{
+				return null;
+			}
 			var tasks = files.Select(async file =>
 			{
 				PontoDepartamento pontoDepartamento = new PontoDepartamento();

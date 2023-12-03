@@ -19,24 +19,30 @@ namespace FechaPonto.Servicos.Relatorios
 		public async Task<IEnumerable<Ponto>> ObterRelatorioCompleto(IEnumerable<PontoDepartamento> pontoDepartamentos)
 		{
 			List<Ponto> result = new List<Ponto>();
-			
-			foreach (PontoDepartamento item in pontoDepartamentos)
+			try
 			{
-				Ponto ponto = new Ponto();
-				ponto.Funcionarios = new List<Funcionario>();
-				string[] valoresTitulo = item.NomeArquivo.Split('-');
-				string[] titulo = valoresTitulo[0].Split('\\');
-				ponto.Departamento = titulo[titulo.Length - 1];
-				ponto.MesVigente= valoresTitulo[1];				
-				ponto.AnoVigencia = int.Parse(valoresTitulo[2].Split('.')[0]);
-				var funcionario = await ObterRelatorioSetor(item.PontoFuncionarios);
-				ponto.Funcionarios.AddRange(funcionario);
-				ponto.TotalPagar += funcionario.Sum(x => x.TotalReceber);
-				ponto.TotalExtras = valorExtra;
-				ponto.TotalDescontos = valorDebito;
-				result.Add(ponto);
+				foreach (PontoDepartamento item in pontoDepartamentos)
+				{
+					Ponto ponto = new Ponto();
+					ponto.Funcionarios = new List<Funcionario>();
+					string[] valoresTitulo = item.NomeArquivo.Split('-');
+					string[] titulo = valoresTitulo[0].Split('\\');
+					ponto.Departamento = titulo[titulo.Length - 1];
+					ponto.MesVigente = valoresTitulo[1];
+					ponto.AnoVigencia = int.Parse(valoresTitulo[2].Split('.')[0]);
+					var funcionario = await ObterRelatorioSetor(item.PontoFuncionarios);
+					ponto.Funcionarios.AddRange(funcionario);
+					ponto.TotalPagar += Math.Round(funcionario.Sum(x => x.TotalReceber), 2);
+					ponto.TotalExtras = Math.Round(valorExtra, 2);
+					ponto.TotalDescontos = Math.Round(valorDebito, 2);
+					result.Add(ponto);
+				}
+				return result;
 			}
-			return result;
+			catch (Exception ex)
+			{
+				throw new InvalidCastException("Conversão de valor inválido na lista: " + ex);
+			}
 		}
 
 		private async Task<List<Funcionario>> ObterRelatorioSetor(IEnumerable<PontoFuncionario> pontoFuncionarios)
@@ -49,6 +55,7 @@ namespace FechaPonto.Servicos.Relatorios
 			{
 				if (codAtual != pontoFuncionario.Id)
 				{
+					funcionario.TotalReceber = Math.Round(funcionario.TotalReceber, 2);
 					pontoSetor.Add(funcionario);
 					funcionario = new Funcionario();
 					codAtual = pontoFuncionario.Id;
@@ -77,7 +84,7 @@ namespace FechaPonto.Servicos.Relatorios
 					funcionario.DiasExtra++;
 				}
 			}
-			
+			funcionario.TotalReceber = Math.Round(funcionario.TotalReceber, 2);
 			pontoSetor.Add(funcionario);
 			return pontoSetor;
 		}
