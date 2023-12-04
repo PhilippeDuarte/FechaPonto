@@ -6,6 +6,8 @@
         width: 600px;
         height: 50px;
         font-size: 20px;
+        border-radius: 5px;
+        border-color: cornflowerblue;
     }
 
     .botaoInput {
@@ -15,6 +17,7 @@
         background-color: darkblue;
         height: 50px;
         font-size: 20px;
+        border-radius: 5px;
     }
 
     .botaoInput:hover {
@@ -22,23 +25,32 @@
         background-color: cornflowerblue;
         transition:0.3s;
     }
+    .secao{
+        margin: 40px;
+        border-bottom: 1px solid #7A7A7A;
+    }
 </style>
-<div class="text-center">
+<div>
+    
+</div>
+<div class="text-center secao">
+    <h3>Ler Arquivos de Ponto no Diretório</h3>
     @using (Html.BeginForm("ObterPontoPorSetor", "Home", FormMethod.Get))
     {
         <form>
-            <input id="caminho" name="caminho" type="text" class="pastaInput" />
+            <input id="caminho" name="caminho" type="text" class="pastaInput" placeholder="Caminho do diretório do arquivo: Ex. C:\Ponto" />
             <input type="submit" value="Buscar" formtarget="_blank" class="botaoInput" />
         </form>
 
     }
-    <p>* O formato dos arquivos devem ser "[nome do setor]-[mês vigente]-[ano vigente]".<br />Exemplo: Financeiro-Agosto-2023</p>
+    <p>* O formato dos arquivos devem ser "[nome do setor]-[mês vigente]-[ano vigente]".<br />Exemplo: Financeiro-Agosto-2023.csv</p>
 </div>
-<div></div>
-@*
-    <form>
-
-    </form>
-
-
-*@
+<div class="secao">
+    <h3>Candidato</h3>
+    <ul>
+        <li>Nome: Philippe de Almeida Duarte;</li>
+        <li>Cargo Pretendido: Desenvolver .Net Pleno;</li>
+        <li>Pretensão salarial: R$6500,00;</li>
+        <li>Data do teste: 4 de dezembro de 2023.</li>        
+    </ul>
+</div>
