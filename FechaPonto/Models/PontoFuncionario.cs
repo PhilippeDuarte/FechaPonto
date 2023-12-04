@@ -6,7 +6,6 @@ namespace FechaPonto.Models
 	{
 		public int Id { get; set; }
 		public string Nome { get; set; }
-		[Column(TypeName = "decimal(18, 2)")]
 		public double ValorHora { get; set; }
 		public DateTime Data { get; set; }
 		public TimeSpan Entrada { get; set; }

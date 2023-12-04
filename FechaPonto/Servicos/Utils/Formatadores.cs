@@ -2,7 +2,7 @@
 {
 	public class Formatadores
 	{
-		public async Task<double> FormataDinheiro(string valor)
+		public double FormataDinheiro(string valor)
 		{
 			string dinheiro = valor.Split()[1];
 			return Convert.ToDouble(dinheiro);

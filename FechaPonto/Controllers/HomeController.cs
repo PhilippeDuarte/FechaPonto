@@ -21,42 +21,46 @@ namespace FechaPonto.Controllers
 
 		public async Task<IActionResult> Index()
 		{
-			var result = await ObterPontoPorSetor("C://Ponto");
-				
-			
-			return View(result);
+			return View();
 		}
 
-		public IActionResult Privacy()
+		public IActionResult About()
 		{
 			return View();
 		}
-		public async Task<IEnumerable<Ponto>> ObterPontoPorSetor(string caminho)
+		[HttpGet]
+		public async Task<IActionResult> ObterPontoPorSetor(string caminho)
 		{
 			List<PontoDepartamento> listaPontoDepartamento = new List<PontoDepartamento>();
-			 
-			var files = Directory.EnumerateFiles(caminho, "*.csv");
-			if (!files.Any())
+			try
 			{
-				return null;
+                var files = Directory.EnumerateFiles(caminho, "*.csv");
+                if (!files.Any())
+                {
+                    return NotFound("Nenhum arquivo encontrando dentro da pasta selecionada.");
+                }
+                var tasks = files.Select(async file =>
+                {
+                    PontoDepartamento pontoDepartamento = new PontoDepartamento();
+                    pontoDepartamento.PontoFuncionarios = new List<PontoFuncionario>();
+                    pontoDepartamento.NomeArquivo = file;
+                    var ponto = await _leitorDeArquivos.ObterTodosOsPontosPorSetor(file);
+                    foreach (var _ponto in ponto)
+                    {
+                        pontoDepartamento.PontoFuncionarios.Add(_ponto);
+                    }
+
+                    listaPontoDepartamento.Add(pontoDepartamento);
+                });
+
+                await Task.WhenAll(tasks);
+                var relatorio = _geradorDeRelatorios.ObterRelatorioCompleto(listaPontoDepartamento);
+                return Ok(relatorio);
+            } 
+			catch (Exception ex)
+			{
+				return BadRequest("Houve um erro ao tentar ler o arquivo de Ponto, verifique o caminho da pasta e os arquivos a serem lidos e tente novamente.");
 			}
-			var tasks = files.Select(async file =>
-			{
-				PontoDepartamento pontoDepartamento = new PontoDepartamento();
-				pontoDepartamento.PontoFuncionarios = new List<PontoFuncionario>();
-				pontoDepartamento.NomeArquivo = file;
-				var ponto = await _leitorDeArquivos.ObterTodosOsPontosPorSetor(file);
-				foreach (var _ponto in ponto)
-				{
-					pontoDepartamento.PontoFuncionarios.Add(_ponto);
-				}
-				
-				listaPontoDepartamento.Add(pontoDepartamento);
-			});
-			
-			await Task.WhenAll(tasks);
-			var relatorio = await _geradorDeRelatorios.ObterRelatorioCompleto(listaPontoDepartamento);
-			return relatorio;
 		}
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()

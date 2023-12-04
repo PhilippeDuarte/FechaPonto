@@ -33,7 +33,7 @@ namespace FechaPonto.Servicos.Arquivos
 							PontoFuncionario funcionario = new PontoFuncionario();
 							funcionario.Id = int.Parse(propriedades[0]);
 							funcionario.Nome = propriedades[1];
-							funcionario.ValorHora = await _utilitarios.FormataDinheiro(propriedades[2]);
+							funcionario.ValorHora = _utilitarios.FormataDinheiro(propriedades[2]);
 							funcionario.Data = Convert.ToDateTime(propriedades[3]);
 							funcionario.Entrada = Convert.ToDateTime(propriedades[4]).TimeOfDay;
 							funcionario.Saida = Convert.ToDateTime(propriedades[5]).TimeOfDay;

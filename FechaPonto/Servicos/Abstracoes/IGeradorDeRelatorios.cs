@@ -4,6 +4,6 @@ namespace FechaPonto.Servicos.Abstracoes
 {
 	public interface IGeradorDeRelatorios
 	{		
-		Task<IEnumerable<Ponto>> ObterRelatorioCompleto(IEnumerable<PontoDepartamento> pontoDepartamentos);
+		IEnumerable<Ponto> ObterRelatorioCompleto(IEnumerable<PontoDepartamento> pontoDepartamentos);
 	}
 }

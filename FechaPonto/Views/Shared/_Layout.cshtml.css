@@ -46,3 +46,22 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+.pastaInput{
+	width: 600px;
+}
+
+button{
+	color: white;
+	background-color: blue;
+}
+
+.nav-link:hover{
+	background-color: dimgrey;
+	color: white;
+	transition: 0.2;
+}
+
+.pastaInput{
+	color: red;
+}

@@ -16,7 +16,7 @@ namespace FechaPonto.Servicos.Relatorios
 			valorDebito=0;
 		}
 		
-		public async Task<IEnumerable<Ponto>> ObterRelatorioCompleto(IEnumerable<PontoDepartamento> pontoDepartamentos)
+		public IEnumerable<Ponto> ObterRelatorioCompleto(IEnumerable<PontoDepartamento> pontoDepartamentos)
 		{
 			List<Ponto> result = new List<Ponto>();
 			try
@@ -30,7 +30,7 @@ namespace FechaPonto.Servicos.Relatorios
 					ponto.Departamento = titulo[titulo.Length - 1];
 					ponto.MesVigente = valoresTitulo[1];
 					ponto.AnoVigencia = int.Parse(valoresTitulo[2].Split('.')[0]);
-					var funcionario = await ObterRelatorioSetor(item.PontoFuncionarios);
+					var funcionario = ObterRelatorioSetor(item.PontoFuncionarios);
 					ponto.Funcionarios.AddRange(funcionario);
 					ponto.TotalPagar += Math.Round(funcionario.Sum(x => x.TotalReceber), 2);
 					ponto.TotalExtras = Math.Round(valorExtra, 2);
@@ -45,7 +45,7 @@ namespace FechaPonto.Servicos.Relatorios
 			}
 		}
 
-		private async Task<List<Funcionario>> ObterRelatorioSetor(IEnumerable<PontoFuncionario> pontoFuncionarios)
+		private IEnumerable<Funcionario> ObterRelatorioSetor(IEnumerable<PontoFuncionario> pontoFuncionarios)
 		{
 			List<Funcionario> pontoSetor = new List<Funcionario>();
 			Funcionario? funcionario = new Funcionario();
